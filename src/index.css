@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body{
+  @apply h-24 bg-gradient-to-r from-orange-100 to-red-800;
+}
