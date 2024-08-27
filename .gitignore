@@ -1,24 +1,76 @@
+# Dependency directories
+node_modules/
+
+# Vite build output
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Optional eslint cache
+.eslintcache
+
+# Optional: .cache is sometimes used by babel and other tools
+.cache/
+
+# Optional: Uncomment if you have tasks that create the folder
+# coverage/
+
+# Optional: Uncomment if you generate docs
+# doc/
+# docs/
+
+# Next.js specific files (if used)
+.next/
+out/
+
+# Storybook build artifacts
+storybook-static/
+
+# Jest test coverage
+coverage/
+
+# Cypress E2E test artifacts
+cypress/videos/
+cypress/screenshots/
+
+# Misc
+*.pnp
+.pnp.js
+*.gz
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# Yarn 2
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
