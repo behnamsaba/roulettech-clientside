@@ -1,45 +1,48 @@
 import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
 import registerValidation from '../utils/registerValidation';
+import { useContext, useState } from 'react';
 import UserContext from '../UserContext';
-import { useContext } from 'react';
 
 const FormField = ({ label, error, ...props }) => (
     <>
         <label htmlFor={props.id}>{label}</label>
         <input {...props} />
-        {error ? <p>{error}</p> : null}
+        {error && <p>{error}</p>}
     </>
 );
 
-// Define propTypes for FormField component
 FormField.propTypes = {
     label: PropTypes.string.isRequired,
     error: PropTypes.string,
     id: PropTypes.string.isRequired
 };
 
-// Default props for optional props
 FormField.defaultProps = {
     error: ''
 };
 
 const Register = () => {
+    const { register } = useContext(UserContext);
+    const [serverError, setServerError] = useState('');
+
     const formik = useFormik({
         initialValues: {
-            username: "",
-            email: "",
-            password: ""
+            username: '',
+            email: '',
+            password: ''
         },
-        onSubmit: values => {
-            console.log(values)
-            alert(JSON.stringify(values, null, 2));
-            register(values)
-        },
-        registerValidation
+        validationSchema: registerValidation,
+        onSubmit: async (values, { setSubmitting }) => {
+            try {
+                await register(values);
+                setSubmitting(false);
+            } catch (error) {
+                setServerError(error.response?.data?.error || 'An unexpected error occurred');
+                setSubmitting(false);
+            }
+        }
     });
-
-    const {register} = useContext(UserContext)
 
     return (
         <form onSubmit={formik.handleSubmit}>
@@ -65,6 +68,7 @@ const Register = () => {
                 {...formik.getFieldProps('password')}
             />
             <button type="submit">Enter!</button>
+            {serverError && <p>{serverError}</p>}
         </form>
     );
 };

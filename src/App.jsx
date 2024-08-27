@@ -5,11 +5,7 @@ import Loading from './components/Loading';
 import getFoods from './API/externalAPI';
 import useLocalStorage from './hooks/useLocalStorage';
 import RoulettechAPI from './API/djangoAPI';
-import { jwtDecode } from "jwt-decode";
-
-
-
-
+import { jwtDecode } from 'jwt-decode';
 
 function App() {
     const [foods, setFoods] = useState(null);
@@ -18,7 +14,6 @@ function App() {
     const [foodIds, setfoodIds] = useState(new Set());
     const [isLoading, setIsLoading] = useState(true);
 
-    // Function to handle login.
     const login = async (data) => {
         const newToken = await RoulettechAPI.login(data);
         setToken(newToken);
@@ -36,7 +31,6 @@ function App() {
     };
 
     const hasSavedRecipe = (id) => foodIds.has(id);
-    // Function to apply to a job.
     const addRecipe = async (id) => {
         if (hasSavedRecipe(id)) return;
         await RoulettechAPI.addRecipe(user.username, id);
@@ -47,13 +41,14 @@ function App() {
     useEffect(() => {
         async function getCurrentUser() {
             if (token) {
-                setIsLoading(true); // Set loading to true at the beginning of the condition
                 try {
-                    const { username } = jwtDecode(token);
+                    const decoded = jwtDecode(token);
+                    const user_id = decoded.user_id;
                     RoulettechAPI.token = token;
-                    const currentUser = await RoulettechAPI.getCurrentUser(username);
-                    setUser(currentUser);
-                    setfoodIds(new Set(currentUser.saved_recipes));
+                    const { username, saved_recipes } =
+                        await RoulettechAPI.getCurrentUser(user_id);
+                    setUser(username);
+                    setfoodIds(new Set(saved_recipes));
                 } catch (error) {
                     console.error(
                         'Error in token decoding or user fetching:',
@@ -64,10 +59,9 @@ function App() {
             }
             setIsLoading(false); // Set loading to false only after all async operations
         }
-    
+
         getCurrentUser();
     }, [token]);
-
 
     useEffect(() => {
         async function loadFoods() {
@@ -76,24 +70,24 @@ function App() {
                 setFoods(fetchedFoods);
                 console.log(fetchedFoods);
             } catch (error) {
-                console.error("Error fetching foods:", error);
-                setIsLoading(false); // Ensure loading is set to false on error
+                console.error('Error fetching foods:', error);
+                setIsLoading(false);
             }
             setIsLoading(false);
         }
-    
+
         loadFoods();
     }, []);
-
 
     if (isLoading) {
         return <Loading />;
     } else if (!foods) {
         return <div>Loading foods or error...</div>;
     }
-    
+
     return (
-        <UserContext.Provider value={{foods, login, register, logOut, addRecipe}}>
+        <UserContext.Provider
+            value={{ foods, login, register, logOut, addRecipe, user, foodIds }}>
             <Roulettech />
         </UserContext.Provider>
     );
